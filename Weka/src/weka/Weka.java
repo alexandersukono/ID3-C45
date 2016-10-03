@@ -17,6 +17,7 @@ import java.util.Scanner;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.bayes.NaiveBayes;
+import weka.classifiers.trees.Id3;
 import weka.classifiers.trees.J48;
 import weka.core.Debug.Random;
 import weka.core.Instances;
@@ -141,8 +142,8 @@ public class Weka {
             System.out.println("==== Select Option ====");
             System.out.println("1. Remove Attribute");
             System.out.println("2. Filter : Resample");
-            System.out.println("3. Build Naive Bayes Classifier");
-            System.out.println("4. Build DT Classifier");
+            System.out.println("3. Build Id3 Classifier");
+            System.out.println("4. Build J48 Classifier");
             System.out.println("5. Testing Model Given Data Set");
             System.out.println("6. 10-fold Cross Validation");
             System.out.println("7. Percentage Split");
@@ -167,9 +168,9 @@ public class Weka {
                 System.out.println(data.toString());
                 break;
             case 3 :
-                cModel = (Classifier)new NaiveBayes();
+                cModel = (Classifier)new Id3();
                 buildClassifier(cModel, data);
-                System.out.println("NaiveBayes classifier has been built");
+                System.out.println("Id3 classifier has been built");
                 break;
             case 4 : 
                 cModel = (Classifier)new J48();
