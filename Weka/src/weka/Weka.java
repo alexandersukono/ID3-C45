@@ -23,6 +23,7 @@ import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
 import weka.filters.Filter;
 import weka.filters.supervised.instance.*;
+import weka.filters.unsupervised.attribute.Remove;
 
 /**
  *
@@ -40,8 +41,8 @@ public class Weka {
         return data;      
     }
     
-    public static void removeAttr() {
-        
+    public static void removeAttr(Instances data, int id) {
+        data.deleteAttributeAt(id);
     }
     
     public static Instances resample(Instances data) {
@@ -67,22 +68,30 @@ public class Weka {
         Evaluation eTest = new Evaluation(trainingData);
         eTest.evaluateModel(cModel, testData);
         String strSummary = eTest.toSummaryString();
+        String strAccuracy = eTest.toClassDetailsString();
+        String strConfusion = eTest.toMatrixString();
         System.out.println();
         System.out.println("==== Results =====");
         System.out.println(strSummary);
+        System.out.println(strAccuracy);
+        System.out.println(strConfusion);
     }
     
-    public static void percentSplit(Instances data, double percentage) {
+    public static Instances[] percentSplit(Instances data, double percentage) {
         data.randomize(new java.util.Random(0));
         int trainSize = (int) Math.round(data.numInstances() * percentage);
         int testSize = data.numInstances() - trainSize;
         Instances train = new Instances(data, 0, trainSize);
         Instances test = new Instances(data, trainSize, testSize);
+        Instances[] instances = new Instances[2];
+        instances[0] = train;
+        instances[1] = test;
         System.out.println("==== Training Data ====");
         System.out.println(train.toString());
         System.out.println();
         System.out.println("==== Testing Data ====");
         System.out.println(test.toString());
+        return instances;
     }
     
     public static void crossValidation(Classifier cModel, Instances data) throws Exception {
@@ -147,7 +156,10 @@ public class Weka {
             System.out.println();
             switch(option) {
             case 1 :
-                System.out.println("Excellent!"); 
+                System.out.print("Input attribute number to remove : ");
+                int attribute = Integer.parseInt(input.readLine());
+                removeAttr(data, attribute);
+                System.out.println(data.toString());
                 break;
             case 2 :
                 resample(data);
@@ -176,7 +188,9 @@ public class Weka {
             case 7 :
                 System.out.print("Input split percentage : ");
                 splitPercentage = Double.parseDouble(input.readLine())/100;
-                percentSplit(data, splitPercentage);
+                Instances[] instances = percentSplit(data, splitPercentage);
+                System.out.print("Input test data file name : ");
+                evaluateModel(cModel,instances[0],instances[1]);
                 break;
             case 8 :
                 System.out.print("Input model name to save : ");
