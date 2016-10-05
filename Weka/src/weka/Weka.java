@@ -25,6 +25,7 @@ import weka.core.converters.ConverterUtils.DataSource;
 import weka.filters.Filter;
 import weka.filters.supervised.instance.*;
 import weka.filters.unsupervised.attribute.Remove;
+import myID3.myID3;
 
 /**
  *
@@ -150,6 +151,7 @@ public class Weka {
             System.out.println("8. Save Model");
             System.out.println("9. Load Model");
             System.out.println("10. Classify Input Data");
+            System.out.println("11. Build myID3 Classifier");
             System.out.println("*** Remember to build classifier first before evaluating or testing data set");
 
             System.out.print("Your choice : ");
@@ -163,7 +165,7 @@ public class Weka {
                 System.out.println(data.toString());
                 break;
             case 2 :
-                resample(data);
+                data = resample(data);
                 System.out.println("After resample");
                 System.out.println(data.toString());
                 break;
@@ -211,6 +213,11 @@ public class Weka {
                     double clsLabel = cModel.classifyInstance(unlabeledData.instance(i));
                     System.out.println(unlabeledData.classAttribute().value((int) clsLabel));
                 }
+                break;
+            case 11 : 
+                cModel = (Classifier)new myID3();
+                buildClassifier(cModel, data);
+                System.out.println("myID3 classifier has been built");
                 break;
             default :
                System.out.println("Invalid Option");
