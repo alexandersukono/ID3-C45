@@ -14,9 +14,9 @@ import java.util.Enumeration;
 public class myID3 extends Classifier {
   
   private myID3[] successor;
-  private Attribute attribute;
   private double classValue;
   private double[] distribution;
+  private Attribute attribute;
   private Attribute classAttribute;
 
   @Override
@@ -37,21 +37,21 @@ public class myID3 extends Classifier {
     return result;
   }
   
-  private Instances[] splitData(Instances data, Attribute att) {
+  private Instances[] splitInst(Instances data, Attribute att) {
 
-    Instances[] splitData = new Instances[att.numValues()];
+    Instances[] splitInst = new Instances[att.numValues()];
     for (int j = 0; j < att.numValues(); j++) {
-      splitData[j] = new Instances(data, data.numInstances());
+      splitInst[j] = new Instances(data, data.numInstances());
     }
     Enumeration instEnum = data.enumerateInstances();
     while (instEnum.hasMoreElements()) {
       Instance inst = (Instance) instEnum.nextElement();
-      splitData[(int) inst.value(att)].add(inst);
+      splitInst[(int) inst.value(att)].add(inst);
     }
-    for (int i = 0; i < splitData.length; i++) {
-      splitData[i].compactify();
+    for (int i = 0; i < splitInst.length; i++) {
+      splitInst[i].compactify();
     }
-    return splitData;
+    return splitInst;
   }
   
   private double calculateEntropy(Instances data) throws Exception {
@@ -79,11 +79,11 @@ public class myID3 extends Classifier {
     throws Exception {
 
     double gain = calculateEntropy(data);
-    Instances[] splitData = splitData(data, att);
+    Instances[] splitInst = splitInst(data, att);
     int i = 0;
     while (i<att.numValues()){
-      if (splitData[i].numInstances() > 0) {
-        gain -= ((double) splitData[i].numInstances() / (double) data.numInstances()) * calculateEntropy(splitData[i]);
+      if (splitInst[i].numInstances() > 0) {
+        gain -= ((double) splitInst[i].numInstances() / (double) data.numInstances()) * calculateEntropy(splitInst[i]);
       }
       i++;
     }
@@ -123,11 +123,11 @@ public class myID3 extends Classifier {
       classValue = Utils.maxIndex(distribution);
       classAttribute = data.classAttribute();
     } else {
-      Instances[] splitData = splitData(data, attribute);
+      Instances[] splitInst = splitInst(data, attribute);
       successor = new myID3[attribute.numValues()];
       for (int j = 0; j < attribute.numValues(); j++) {
         successor[j] = new myID3();
-        successor[j].makeTree(splitData[j]);
+        successor[j].makeTree(splitInst[j]);
       }
     }
   }
