@@ -7,16 +7,12 @@ package weka;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Scanner;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
-import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.trees.Id3;
 import weka.classifiers.trees.J48;
 import weka.core.Debug.Random;
@@ -24,8 +20,8 @@ import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
 import weka.filters.Filter;
 import weka.filters.supervised.instance.*;
-import weka.filters.unsupervised.attribute.Remove;
-import myID3.myID3;
+import myWeka.myID3;
+import myWeka.myJ48;
 
 /**
  *
@@ -99,7 +95,14 @@ public class Weka {
     public static void crossValidation(Classifier cModel, Instances data) throws Exception {
         Evaluation eval = new Evaluation(data);
         eval.crossValidateModel(cModel, data, 10, new Random(1));
-        System.out.println("Estimated Accuracy: "+Double.toString(eval.pctCorrect()));
+        String strSummary = eval.toSummaryString();
+        String strAccuracy = eval.toClassDetailsString();
+        String strConfusion = eval.toMatrixString();
+        System.out.println();
+        System.out.println("==== Results =====");
+        System.out.println(strSummary);
+        System.out.println(strAccuracy);
+        System.out.println(strConfusion);
     }
     
     private static void saveModel(Classifier c, String name) throws Exception {
@@ -152,6 +155,7 @@ public class Weka {
             System.out.println("9. Load Model");
             System.out.println("10. Classify Input Data");
             System.out.println("11. Build myID3 Classifier");
+            System.out.println("12. Build myJ48 Classifier");
             System.out.println("*** Remember to build classifier first before evaluating or testing data set");
 
             System.out.print("Your choice : ");
@@ -219,9 +223,14 @@ public class Weka {
                 buildClassifier(cModel, data);
                 System.out.println("myID3 classifier has been built");
                 break;
+            case 12 : 
+                cModel = (Classifier)new myJ48();
+                buildClassifier(cModel, data);
+                System.out.println("myJ48 classifier has been built");
+                break;
             default :
-               System.out.println("Invalid Option");
-               break;
+                System.out.println("Invalid Option");
+                break;
             }
         }
     }
